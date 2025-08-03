@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import { HashRouter as Router, Route, Link, Routes } from "react-router-dom";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import { initializeApp } from 'firebase/app';
