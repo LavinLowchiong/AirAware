@@ -5,15 +5,23 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, query, orderBy, limit, getDocs, onSnapshot } from 'firebase/firestore';
+import L from 'leaflet';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAMyLHGSUQGdrCeidb72By5i00P5rthHEY",
-  authDomain: "air-aware-2996a.firebaseapp.com",
-  projectId: "air-aware-2996a",
-  storageBucket: "air-aware-2996a.appspot.com",
-  messagingSenderId: "806849901077",
-  appId: "1:806849901077:web:d1c92c30ddb43ba2a7141c",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
@@ -55,7 +63,6 @@ useEffect(() => {
           rainfall: data.rainfall || 0, // Check if this field exists
           windSpeed: data.windSpeed || 0, // Check if this field exists
           windDirection: data.windDirection || 'N', // Check if this field exists
-          aqi: data.aqi || 0, // New field from your database
           co2: data.co2 || 0, // New field from your database
           deviceId: data.deviceId || '',
           timestamp: data.timestamp || new Date().toISOString(),
@@ -105,11 +112,10 @@ historySnapshot.forEach((doc, index) => {
           rainfall: 0,
           windSpeed: 0,
           windDirection: 'N',
-          aqi: 0,
           co2: 0,
           deviceId: '',
           timestamp: new Date().toISOString(),
-          aqi: calculateAQI(data.pm1 || 0, data.pm25 || 0, data.pm10 || 0),
+          aqi: calculateAQI(0, 40, 0),
         });
       }
     } catch (error) {
@@ -127,11 +133,10 @@ historySnapshot.forEach((doc, index) => {
         rainfall: 0,
         windSpeed: 0,
         windDirection: 'N',
-        aqi: 0,
         co2: 0,
         deviceId: '',
         timestamp: new Date().toISOString(),
-        aqi: calculateAQI(data.pm1 || 0, data.pm25 || 0, data.pm10 || 0),
+        aqi: calculateAQI(0, 40, 0),
       });
     } finally {
       setLoading(false);

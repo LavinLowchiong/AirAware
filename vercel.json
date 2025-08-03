@@ -1,4 +1,9 @@
 {
+  "build": {
+    "env": {
+      "NODE_VERSION": "22"
+    }
+  },
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
