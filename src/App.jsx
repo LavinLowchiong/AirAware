@@ -27,13 +27,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-
-const App = () => {
-  const [currentData, setCurrentData] = useState(null);
-  const [historyData, setHistoryData] = useState([]);
-  const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
-  const [loading, setLoading] = useState(true);
-
     const calculateAQI = (pm1, pm25, pm10) => {
   // Use PM2.5 as primary indicator (most common standard)
   let aqi = 0;
@@ -54,6 +47,25 @@ const App = () => {
   
   return Math.min(aqi, 500);
 };
+
+const getAQIStatus = (aqi) => {
+  if (aqi <= 50) return { status: 'Good', advice: 'Enjoy outdoor activities freely.' };
+  if (aqi <= 100) return { status: 'Moderate', advice: 'Sensitive groups should limit prolonged outdoor exertion.' };
+  if (aqi <= 150) return { status: 'Unhealthy for Sensitive Groups', advice: 'Sensitive individuals should reduce outdoor activity.' };
+  if (aqi <= 200) return { status: 'Unhealthy', advice: 'Everyone should limit prolonged outdoor exertion.' };
+  if (aqi <= 250) return { status: 'Very Unhealthy', advice: 'Avoid outdoor activities; wear masks if going outside.' };
+  if (aqi <= 300) return { status: 'Severe', advice: 'Stay indoors; use air purifiers and avoid any outdoor exposure.' };
+  return { status: 'Hazardous', advice: 'Remain indoors with sealed windows and avoid all outdoor activities.' };
+};
+
+
+const App = () => {
+  const [currentData, setCurrentData] = useState(null);
+  const [historyData, setHistoryData] = useState([]);
+  const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+
 
   // Fetch data from Firebase
 useEffect(() => {
@@ -221,15 +233,7 @@ historySnapshot.forEach((doc, index) => {
 
 
 
-const getAQIStatus = (aqi) => {
-  if (aqi <= 50) return { status: 'Good', advice: 'Enjoy outdoor activities freely.' };
-  if (aqi <= 100) return { status: 'Moderate', advice: 'Sensitive groups should limit prolonged outdoor exertion.' };
-  if (aqi <= 150) return { status: 'Unhealthy for Sensitive Groups', advice: 'Sensitive individuals should reduce outdoor activity.' };
-  if (aqi <= 200) return { status: 'Unhealthy', advice: 'Everyone should limit prolonged outdoor exertion.' };
-  if (aqi <= 250) return { status: 'Very Unhealthy', advice: 'Avoid outdoor activities; wear masks if going outside.' };
-  if (aqi <= 300) return { status: 'Severe', advice: 'Stay indoors; use air purifiers and avoid any outdoor exposure.' };
-  return { status: 'Hazardous', advice: 'Remain indoors with sealed windows and avoid all outdoor activities.' };
-};
+
 
   const InsightsPage = () => (
     <div className="insights-page">
