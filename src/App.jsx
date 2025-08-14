@@ -394,10 +394,6 @@ const App = () => {
                   <div className="aqi-status">Status: {currentData ? getAQIStatus(calculateAQI(currentData.pm1, currentData.pm25, currentData.pm10)).status : 'Good'}</div>
                 </div>
               </div>
-              <div className="aqi-details">
-                <div className="aqi-detail-item">Humidity: {currentData?.humidity || 0}%</div>
-                <div className="aqi-detail-item">Wind speed: {currentData?.windSpeed || 0} m/s</div>
-              </div>
               <div className="aqi-advice-card">
                 <div className={`aqi-range ${currentData ? getAQIRangeClass(calculateAQI(currentData.pm1, currentData.pm25, currentData.pm10)) : 'good'}`}>
                   {currentData ? getAQIRange(calculateAQI(currentData.pm1, currentData.pm25, currentData.pm10)) : 'AQI (0-50)'}
@@ -562,10 +558,12 @@ const App = () => {
         </div>
 
         <div className="history-panel">
-          <div 
-            className="history-header"
-            onClick={() => setIsHistoryExpanded(!isHistoryExpanded)}
-          >
+          <div className="history-header" onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsHistoryExpanded(!isHistoryExpanded);
+        }}
+        >
             <h3>History</h3>
             {isHistoryExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
           </div>
@@ -1098,7 +1096,7 @@ const App = () => {
 
           .aqi-advice {
             font-size: 18px;
-            font-family: 'Antic', serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
           }
 
           .custom-div-icon {
@@ -1465,10 +1463,9 @@ const App = () => {
             }
 
             .aqi-overlay-insights {
-              width: 80%;
+              width: 100%;
               max-width: 260px;
-              padding: 0 5px;
-              height: 60vw;
+              height:90%;
             }
 
             .aqi-title {
@@ -1477,17 +1474,21 @@ const App = () => {
             }
 
             .aqi-main-card {
-              padding: 10px;
+              padding: 8px;
               border-radius: 10px;
-              gap: 6px;
+              gap: 0px;
+              margin-bottom: 6px;
             }
 
             .aqi-value {
-              font-size: 22px;
+              font-size: 14px;
             }
 
             .aqi-label {
-              font-size: 12px;
+              font-size: 14px;
+              padding: 0px;
+              margin-bottom: 0px;
+
             }
 
             .aqi-temp {
@@ -1509,20 +1510,25 @@ const App = () => {
             }
 
             .aqi-advice-card {
-              padding: 8px;
+              padding: 4px;
               border-radius: 8px;
             }
 
             .aqi-range {
-              font-size: 14px;
+              font-size: 12px;
               margin-bottom: 3px;
             }
 
             .aqi-advice {
-              font-size: 11px;
+              font-size: 12px;
               line-height: 1.2;
             }
+
           }
+
+          
+
+
         `}</style>
         <Routes>
           <Route path="/" element={<HomePage />} />
