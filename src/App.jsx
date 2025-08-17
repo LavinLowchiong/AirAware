@@ -45,9 +45,14 @@ const validateTimestamp = (timestamp) => {
     date = new Date(timestamp);
   }
   
-  // Check if date is valid and from 2025 or later
+  // Check if date is valid and within the allowed range
   if (isNaN(date.getTime())) return null;
-  if (date.getFullYear() < 2025) return null;
+  
+  // Define date range: 2025/01/01 to 2025/09/01
+  const minDate = new Date('2025-01-01T00:00:00.000Z');
+  const maxDate = new Date('2025-09-01T23:59:59.999Z');
+  
+  if (date < minDate || date > maxDate) return null;
   
   return date;
 };
@@ -210,8 +215,8 @@ const App = () => {
           
           allReadings.push({
             id: doc.id,
-            latitude: data.latitude || 6.791164,
-            longitude: data.longitude || 79.900497,
+            latitude: data.latitude || 6.797089032198065,
+            longitude: data.longitude || 79.9017697166341,
             temperature: data.temperature || 0,
             humidity: data.humidity || 0,
             voc: data.voc || 0,
@@ -232,7 +237,7 @@ const App = () => {
         // Sort by valid timestamp (most recent first)
         allReadings.sort((a, b) => b.validTimestamp.getTime() - a.validTimestamp.getTime());
 
-        console.log(`Found ${allReadings.length} valid readings from 2025 or later`);
+        console.log(`Found ${allReadings.length} valid readings within allowed date range`);
 
         // Group locations by proximity
         const groups = groupLocationsByProximity(allReadings);
@@ -246,8 +251,8 @@ const App = () => {
           console.warn('No valid readings found, using fallback data');
           // Fallback data if no valid documents found
           setCurrentData({
-            latitude: 6.791164,
-            longitude: 79.900497,
+            latitude: 6.797089032198065,
+            longitude: 79.9017697166341,
             temperature: 30,
             humidity: 80,
             voc: 140,
@@ -272,8 +277,8 @@ const App = () => {
         // Fallback data on error
         const fallbackDate = new Date();
         setCurrentData({
-          latitude: 6.791164,
-          longitude: 79.900497,
+          latitude: 6.797089032198065,
+          longitude: 79.9017697166341,
           temperature: 30,
           humidity: 80,
           voc: 140,
@@ -313,8 +318,8 @@ const App = () => {
         if (validDate) {
           validReadings.push({
             id: doc.id,
-            latitude: data.latitude || 6.791164,
-            longitude: data.longitude || 79.900497,
+            latitude: data.latitude || 6.797089032198065,
+            longitude: data.longitude || 79.9017697166341,
             temperature: data.temperature || 0,
             humidity: data.humidity || 0,
             voc: data.voc || 0,
