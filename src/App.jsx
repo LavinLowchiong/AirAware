@@ -361,9 +361,16 @@ const App = () => {
     }));
   }, [locationGroups]);
 
+  // Handle title click to refresh page
+  const handleTitleClick = () => {
+    window.location.reload();
+  };
+
   const NavigationBar = () => (
     <nav className="nav">
-      <h2 className="nav-title">Air Aware</h2>
+      <h2 className="nav-title" onClick={handleTitleClick} style={{ cursor: 'pointer' }}>
+        Air Aware
+      </h2>
       <div className="nav-links">
         <Link to="/" className="nav-link">Home</Link>
         <Link to="/insights" className="nav-link">Insights</Link>
@@ -395,7 +402,7 @@ const App = () => {
                   <div className="aqi-value">{currentData ? calculateAQI(currentData.pm1, currentData.pm25, currentData.pm10) : '00'}</div>
                 </div>
                 <div className="aqi-right">
-                  <div className="aqi-temp">🌡️ {currentData?.temperature || 0}°C</div>
+                  <div className="aqi-temp">🌡 {currentData?.temperature || 0}°C</div>
                   <div className="aqi-status">Status: {currentData ? getAQIStatus(calculateAQI(currentData.pm1, currentData.pm25, currentData.pm10)).status : 'Good'}</div>
                 </div>
               </div>
@@ -699,6 +706,11 @@ const App = () => {
           .nav-title {
             font-size: 32px;
             font-weight: bold;
+            transition: opacity 0.3s ease;
+          }
+
+          .nav-title:hover {
+            opacity: 0.8;
           }
 
           .nav-links {
@@ -1530,10 +1542,6 @@ const App = () => {
             }
 
           }
-
-          
-
-
         `}</style>
         <Routes>
           <Route path="/" element={<HomePage />} />
