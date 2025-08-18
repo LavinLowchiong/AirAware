@@ -189,6 +189,17 @@ const App = () => {
   const [selectedLocationGroup, setSelectedLocationGroup] = useState(null);
   const [locationHistoryData, setLocationHistoryData] = useState([]);
 
+
+  // Auto-refresh effect - refresh every 2.5 minutes (150 seconds)
+  useEffect(() => {
+    const refreshInterval = setInterval(() => {
+      window.location.reload();
+    }, 150000); // 2.5 minutes in milliseconds
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(refreshInterval);
+  }, []);
+
   // Fetch data from Firebase
   useEffect(() => {
     const fetchData = async () => {
