@@ -6,6 +6,7 @@ import "leaflet/dist/leaflet.css";
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, query, orderBy, limit, getDocs, onSnapshot } from 'firebase/firestore';
 import L from 'leaflet';
+import ChangeView from "./useMap";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -13,6 +14,8 @@ L.Icon.Default.mergeOptions({
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
+
+
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -123,6 +126,7 @@ const groupLocationsByProximity = (readings) => {
 const createCustomIcon = (isLatest) => {
   const color = isLatest ? 'blue' : 'orange';
   return L.divIcon({
+    
     html: `<div style="background-color: ${color}; width: 25px; height: 25px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
     className: 'custom-div-icon',
     iconSize: [25, 25],
@@ -202,6 +206,7 @@ const App = () => {
 
   // Fetch data from Firebase
   useEffect(() => {
+
     const fetchData = async () => {
       try {
         // Get a larger sample to account for filtering out invalid dates
@@ -230,7 +235,8 @@ const App = () => {
             longitude: data.longitude || 79.9017697166341,
             temperature: data.temperature || 0,
             humidity: data.humidity || 0,
-            voc: data.voc || 0,
+            voc: data.voc || 100,
+            nox: data.nox || 100,
             pm25: data.pm25 || 0,
             pm10: data.pm10 || 0,
             pm1: data.pm1 || 0,
@@ -267,6 +273,7 @@ const App = () => {
             temperature: 30,
             humidity: 80,
             voc: 140,
+            nox: 100,
             pm25: 40,
             pm10: 0,
             pm1: 0,
@@ -293,6 +300,7 @@ const App = () => {
           temperature: 30,
           humidity: 80,
           voc: 140,
+          nox: 100,
           pm25: 40,
           pm10: 0,
           pm1: 0,
@@ -333,7 +341,8 @@ const App = () => {
             longitude: data.longitude || 79.9017697166341,
             temperature: data.temperature || 0,
             humidity: data.humidity || 0,
-            voc: data.voc || 0,
+            voc: data.voc || 100,
+            nox: data.nox || 100,
             pm25: data.pm25 || 0,
             pm10: data.pm10 || 0,
             pm1: data.pm1 || 0,
@@ -364,7 +373,7 @@ const App = () => {
 
   const airQualityMarkers = useMemo(() => {
     return locationGroups.map((group, index) => ({
-      id: `location-${index}`,
+      id: location-{index},
       latitude: group.latitude,
       longitude: group.longitude,
       isLatest: index === 0,
@@ -465,22 +474,29 @@ const App = () => {
           </div>
         </div>
 
-        {/* VOC Section */}
+        {/* VOC & NOx Section */}
         <div className="voc-section">
           <div className="section-content">
             <div className="section-text">
-              <h2>Volatile Organic Compounds (VOC)</h2>
-              <div className="voc-display">
-                <div className="voc-value">{currentData?.voc || 0} ppb</div>
+              <h2>Volatile Organic Compounds (VOC) & NOx</h2>
+              <div className="voc-nox-display">
+                <div className="voc-card">
+                  <div className="voc-title">VOC Index</div>
+                  <div className="voc-value">{currentData?.voc || 100}</div>
+                </div>
+                <div className="nox-card">
+                  <div className="nox-title">NOx Index</div>
+                  <div className="nox-value">{currentData?.nox || 100}</div>
+                </div>
               </div>
               <p>
                 Volatile Organic Compounds (VOCs) are organic chemicals that easily evaporate into the air and can
                 significantly impact indoor and outdoor air quality. They are commonly released from products such as
-                paints, cleaning supplies, and industrial processes. Prolonged exposure to high levels of VOCs can cause
-                adverse health effects, including respiratory issues, headaches, and irritation of the eyes, nose, and throat.
-                Maintaining VOC levels within a healthy range is crucial for well-being. Ideally, VOC concentrations should
-                remain below 500 parts per billion (ppb) in indoor environments, with levels below 200 ppb being optimal
-                for sensitive individuals.
+                paints, cleaning supplies, and industrial processes. NOx (Nitrogen Oxides) are primarily produced by
+                combustion processes, including vehicle emissions and industrial activities. Both VOC and NOx indices
+                are measured on a scale where values below 100 are considered excellent, 100-150 good, 150-200 fair,
+                200-300 poor, and above 300 very poor. Monitoring these indices helps assess air quality and potential
+                health impacts from exposure to these compounds.
               </p>
             </div>
           </div>
@@ -535,6 +551,7 @@ const App = () => {
         <NavigationBar />
         <MapContainer
           center={[currentData.latitude, currentData.longitude]}
+         
           zoom={15}
           className="map-container"
           zoomControl={false}
@@ -543,6 +560,7 @@ const App = () => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
+           {/* <ChangeView center={[currentData.latitude, currentData.longitude]} zoom={15} /> */}
           {airQualityMarkers.map((marker) => (
             <Marker 
               key={marker.id} 
@@ -594,14 +612,15 @@ const App = () => {
             <div className="history-content">
               {(selectedLocationGroup ? locationHistoryData : historyData).length > 0 ? (
                 (selectedLocationGroup ? locationHistoryData : historyData).slice(0, 5).map((data, index) => (
-                  <div key={data.id || `history-${index}`} className="history-item">
+                  <div key={data.id || history-{index}} className="history-item">
                     <div className="history-time">
                       {data.validTimestamp ? data.validTimestamp.toLocaleString() : 'Invalid date'}
                     </div>
                     <div className="history-values">
                       <span>T: {data.temperature}°C</span>
                       <span>H: {data.humidity}%</span>
-                      <span>VOC: {data.voc}ppb</span>
+                      <span>VOC: {data.voc}</span>
+                      <span>NOx: {data.nox}</span>
                       <span>PM2.5: {data.pm25}μg/m³</span>
                     </div>
                   </div>
@@ -629,7 +648,8 @@ const App = () => {
       <div className="popup-data">
         <p><strong>Temperature:</strong> {marker.temperature}°C</p>
         <p><strong>Humidity:</strong> {marker.humidity}%</p>
-        <p><strong>VOC:</strong> {marker.voc} ppb</p>
+        <p><strong>VOC Index:</strong> {marker.voc}</p>
+        <p><strong>NOx Index:</strong> {marker.nox}</p>
         <p><strong>PM2.5:</strong> {marker.pm25} μg/m³</p>
         <p><strong>PM10:</strong> {marker.pm10} μg/m³</p>
         <p><strong>PM1:</strong> {marker.pm1} μg/m³</p>
@@ -642,7 +662,8 @@ const App = () => {
     <div className="air-quality-data">
       <div className="data-item"><strong>Temperature:</strong> {location.temperature}°C</div>
       <div className="data-item"><strong>Humidity:</strong> {location.humidity}%</div>
-      <div className="data-item"><strong>VOC:</strong> {location.voc} ppb</div>
+      <div className="data-item"><strong>VOC Index:</strong> {location.voc}</div>
+      <div className="data-item"><strong>NOx Index:</strong> {location.nox}</div>
       <div className="data-item"><strong>PM2.5:</strong> {location.pm25} μg/m³</div>
       <div className="data-item"><strong>PM10:</strong> {location.pm10} μg/m³</div>
       <div className="data-item"><strong>PM1:</strong> {location.pm1} μg/m³</div>
@@ -965,16 +986,30 @@ const App = () => {
             margin-top: 20px;
           }
 
-          .voc-display {
+          .voc-nox-display {
             display: flex;
             justify-content: center;
+            gap: 30px;
             margin: 20px 0;
+            flex-wrap: wrap;
           }
 
-          .voc-value {
+          .voc-card, .nox-card {
             background: rgba(255, 255, 255, 0.2);
             padding: 20px 40px;
             border-radius: 8px;
+            text-align: center;
+            min-width: 160px;
+          }
+
+          .voc-title, .nox-title {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+            font-weight: bold;
+          }
+
+          .voc-value, .nox-value {
             font-size: 32px;
             font-weight: bold;
           }
@@ -1193,6 +1228,19 @@ const App = () => {
             .aqi-advice {
               font-size: 14px;
             }
+
+            .voc-nox-display {
+              gap: 15px;
+            }
+
+            .voc-card, .nox-card {
+              padding: 15px 25px;
+              min-width: 140px;
+            }
+
+            .voc-value, .nox-value {
+              font-size: 24px;
+            }
           }
 
           .popup-data p {
@@ -1293,11 +1341,6 @@ const App = () => {
 
             .section-text p {
               font-size: 14px;
-            }
-
-            .voc-value {
-              padding: 15px 30px;
-              font-size: 24px;
             }
 
             .pm-display {
@@ -1437,7 +1480,26 @@ const App = () => {
               line-height: 1.3;
             }
 
+            .voc-nox-display {
+              gap: 10px;
+              flex-direction: column;
+              align-items: center;
+            }
 
+            .voc-card, .nox-card {
+              padding: 12px 20px;
+              min-width: 120px;
+              width: 100%;
+              max-width: 200px;
+            }
+
+            .voc-title, .nox-title {
+              font-size: 14px;
+            }
+
+            .voc-value, .nox-value {
+              font-size: 20px;
+            }
           }
 
           @media (max-width: 480px) {
@@ -1487,7 +1549,6 @@ const App = () => {
 
             .welcome-image {
               height: 150vw;
-
             }
 
             .aqi-overlay-insights {
@@ -1516,7 +1577,6 @@ const App = () => {
               font-size: 14px;
               padding: 0px;
               margin-bottom: 0px;
-
             }
 
             .aqi-temp {
@@ -1552,6 +1612,27 @@ const App = () => {
               line-height: 1.2;
             }
 
+            .voc-nox-display {
+              gap: 8px;
+              flex-direction: column;
+              align-items: center;
+            }
+
+            .voc-card, .nox-card {
+              padding: 8px 15px;
+              min-width: 100px;
+              width: 90%;
+              max-width: 150px;
+            }
+
+            .voc-title, .nox-title {
+              font-size: 12px;
+              margin-bottom: 4px;
+            }
+
+            .voc-value, .nox-value {
+              font-size: 16px;
+            }
           }
         `}</style>
         <Routes>
